@@ -15,6 +15,7 @@ SRCS        = srcs/utils.c \
 				srcs/death_monitor.c \
 				srcs/meal_supervisor.c \
 				srcs/display.c \
+				srcs/exit.c \
 				srcs/main.c 
 
 OBJS        = $(SRCS:srcs/%.c=$(OBJS_PATH)/%.o)

@@ -1,0 +1,582 @@
+==381786== Memcheck, a memory error detector
+==381786== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==381786== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==381786== Command: ./philo_bonus 5 800 200 200 7
+==381786== 
+==381790== 
+==381790== HEAP SUMMARY:
+==381790==     in use at exit: 686 bytes in 14 blocks
+==381790==   total heap usage: 17 allocs, 3 frees, 1,720 bytes allocated
+==381790== 
+==381790== 20 bytes in 1 blocks are still reachable in loss record 1 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x401650: init_table (init.c:26)
+==381790==    by 0x4023F7: main (main.c:26)
+==381790== 
+==381790== 24 bytes in 1 blocks are still reachable in loss record 2 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4997FB4: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 24 bytes in 1 blocks are still reachable in loss record 3 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x499801E: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 24 bytes in 1 blocks are still reachable in loss record 4 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x499801E: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 24 bytes in 1 blocks are still reachable in loss record 5 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x499801E: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 24 bytes in 1 blocks are still reachable in loss record 6 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x499801E: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381790==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 24 bytes in 1 blocks are possibly lost in loss record 7 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x499801E: tsearch (tsearch.c:337)
+==381790==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 39 bytes in 1 blocks are still reachable in loss record 8 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 39 bytes in 1 blocks are still reachable in loss record 9 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 40 bytes in 1 blocks are still reachable in loss record 10 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381790==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 41 bytes in 1 blocks are still reachable in loss record 11 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 45 bytes in 1 blocks are possibly lost in loss record 12 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 46 bytes in 1 blocks are still reachable in loss record 13 of 14
+==381790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381790==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381790==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381790==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381790==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== 272 bytes in 1 blocks are possibly lost in loss record 14 of 14
+==381790==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381790==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==381790==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==381790==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==381790==    by 0x490D7B4: allocate_stack (allocatestack.c:430)
+==381790==    by 0x490D7B4: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==381790==    by 0x401A55: philo_routine (philo_routine.c:29)
+==381790==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381790==    by 0x402426: main (main.c:31)
+==381790== 
+==381790== LEAK SUMMARY:
+==381790==    definitely lost: 0 bytes in 0 blocks
+==381790==    indirectly lost: 0 bytes in 0 blocks
+==381790==      possibly lost: 341 bytes in 3 blocks
+==381790==    still reachable: 345 bytes in 11 blocks
+==381790==         suppressed: 0 bytes in 0 blocks
+==381790== 
+==381790== For lists of detected and suppressed errors, rerun with: -s
+==381790== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==381788== 
+==381788== HEAP SUMMARY:
+==381788==     in use at exit: 686 bytes in 14 blocks
+==381788==   total heap usage: 17 allocs, 3 frees, 1,720 bytes allocated
+==381788== 
+==381788== 20 bytes in 1 blocks are still reachable in loss record 1 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x401650: init_table (init.c:26)
+==381788==    by 0x4023F7: main (main.c:26)
+==381788== 
+==381788== 24 bytes in 1 blocks are still reachable in loss record 2 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4997FB4: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 24 bytes in 1 blocks are still reachable in loss record 3 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x499801E: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 24 bytes in 1 blocks are still reachable in loss record 4 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x499801E: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 24 bytes in 1 blocks are still reachable in loss record 5 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x499801E: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 24 bytes in 1 blocks are still reachable in loss record 6 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x499801E: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381788==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 24 bytes in 1 blocks are possibly lost in loss record 7 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x499801E: tsearch (tsearch.c:337)
+==381788==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 39 bytes in 1 blocks are still reachable in loss record 8 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 39 bytes in 1 blocks are still reachable in loss record 9 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 40 bytes in 1 blocks are still reachable in loss record 10 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381788==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 41 bytes in 1 blocks are still reachable in loss record 11 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 45 bytes in 1 blocks are possibly lost in loss record 12 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 46 bytes in 1 blocks are still reachable in loss record 13 of 14
+==381788==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381788==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381788==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381788==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381788==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== 272 bytes in 1 blocks are possibly lost in loss record 14 of 14
+==381788==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381788==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==381788==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==381788==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==381788==    by 0x490D7B4: allocate_stack (allocatestack.c:430)
+==381788==    by 0x490D7B4: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==381788==    by 0x401A55: philo_routine (philo_routine.c:29)
+==381788==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381788==    by 0x402426: main (main.c:31)
+==381788== 
+==381788== LEAK SUMMARY:
+==381788==    definitely lost: 0 bytes in 0 blocks
+==381788==    indirectly lost: 0 bytes in 0 blocks
+==381788==      possibly lost: 341 bytes in 3 blocks
+==381788==    still reachable: 345 bytes in 11 blocks
+==381788==         suppressed: 0 bytes in 0 blocks
+==381788== 
+==381788== For lists of detected and suppressed errors, rerun with: -s
+==381788== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==381789== 
+==381789== HEAP SUMMARY:
+==381789==     in use at exit: 686 bytes in 14 blocks
+==381789==   total heap usage: 17 allocs, 3 frees, 1,720 bytes allocated
+==381789== 
+==381787== 
+==381787== HEAP SUMMARY:
+==381787==     in use at exit: 686 bytes in 14 blocks
+==381787==   total heap usage: 17 allocs, 3 frees, 1,720 bytes allocated
+==381787== 
+==381789== 20 bytes in 1 blocks are still reachable in loss record 1 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x401650: init_table (init.c:26)
+==381789==    by 0x4023F7: main (main.c:26)
+==381789== 
+==381789== 24 bytes in 1 blocks are still reachable in loss record 2 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4997FB4: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 24 bytes in 1 blocks are still reachable in loss record 3 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x499801E: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 24 bytes in 1 blocks are still reachable in loss record 4 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x499801E: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 24 bytes in 1 blocks are still reachable in loss record 5 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x499801E: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 24 bytes in 1 blocks are still reachable in loss record 6 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x499801E: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381789==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 24 bytes in 1 blocks are possibly lost in loss record 7 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x499801E: tsearch (tsearch.c:337)
+==381789==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 39 bytes in 1 blocks are still reachable in loss record 8 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 39 bytes in 1 blocks are still reachable in loss record 9 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 40 bytes in 1 blocks are still reachable in loss record 10 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381789==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 41 bytes in 1 blocks are still reachable in loss record 11 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 45 bytes in 1 blocks are possibly lost in loss record 12 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 46 bytes in 1 blocks are still reachable in loss record 13 of 14
+==381789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381789==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381789==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381789==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381789==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== 272 bytes in 1 blocks are possibly lost in loss record 14 of 14
+==381789==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381789==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==381789==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==381789==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==381789==    by 0x490D7B4: allocate_stack (allocatestack.c:430)
+==381789==    by 0x490D7B4: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==381789==    by 0x401A55: philo_routine (philo_routine.c:29)
+==381789==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381789==    by 0x402426: main (main.c:31)
+==381789== 
+==381789== LEAK SUMMARY:
+==381789==    definitely lost: 0 bytes in 0 blocks
+==381789==    indirectly lost: 0 bytes in 0 blocks
+==381789==      possibly lost: 341 bytes in 3 blocks
+==381789==    still reachable: 345 bytes in 11 blocks
+==381789==         suppressed: 0 bytes in 0 blocks
+==381789== 
+==381789== For lists of detected and suppressed errors, rerun with: -s
+==381789== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==381787== 20 bytes in 1 blocks are still reachable in loss record 1 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x401650: init_table (init.c:26)
+==381787==    by 0x4023F7: main (main.c:26)
+==381787== 
+==381787== 24 bytes in 1 blocks are still reachable in loss record 2 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4997FB4: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 24 bytes in 1 blocks are still reachable in loss record 3 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x499801E: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 24 bytes in 1 blocks are still reachable in loss record 4 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x499801E: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 24 bytes in 1 blocks are still reachable in loss record 5 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x499801E: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 24 bytes in 1 blocks are still reachable in loss record 6 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x499801E: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381787==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 24 bytes in 1 blocks are possibly lost in loss record 7 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x499801E: tsearch (tsearch.c:337)
+==381787==    by 0x49147A1: __sem_check_add_mapping (sem_routines.c:121)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 39 bytes in 1 blocks are still reachable in loss record 8 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401DB5: init_semaphores (global_supervisor.c:44)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 39 bytes in 1 blocks are still reachable in loss record 9 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401EC3: init_semaphores (global_supervisor.c:56)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 40 bytes in 1 blocks are still reachable in loss record 10 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401A14: philo_routine (philo_routine.c:25)
+==381787==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 41 bytes in 1 blocks are still reachable in loss record 11 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401DEE: init_semaphores (global_supervisor.c:46)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 45 bytes in 1 blocks are possibly lost in loss record 12 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401E26: init_semaphores (global_supervisor.c:48)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 46 bytes in 1 blocks are still reachable in loss record 13 of 14
+==381787==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x4914728: __sem_check_add_mapping (sem_routines.c:104)
+==381787==    by 0x491443B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==381787==    by 0x401F92: open_one_sem (global_supervisor.c:30)
+==381787==    by 0x401E5E: init_semaphores (global_supervisor.c:50)
+==381787==    by 0x401C3A: global_supervisor (global_supervisor.c:82)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== 272 bytes in 1 blocks are possibly lost in loss record 14 of 14
+==381787==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==381787==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==381787==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==381787==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==381787==    by 0x490D7B4: allocate_stack (allocatestack.c:430)
+==381787==    by 0x490D7B4: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==381787==    by 0x401A55: philo_routine (philo_routine.c:29)
+==381787==    by 0x401CCB: global_supervisor (global_supervisor.c:99)
+==381787==    by 0x402426: main (main.c:31)
+==381787== 
+==381787== LEAK SUMMARY:
+==381787==    definitely lost: 0 bytes in 0 blocks
+==381787==    indirectly lost: 0 bytes in 0 blocks
+==381787==      possibly lost: 341 bytes in 3 blocks
+==381787==    still reachable: 345 bytes in 11 blocks
+==381787==         suppressed: 0 bytes in 0 blocks
+==381787== 
+==381787== For lists of detected and suppressed errors, rerun with: -s
+==381787== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==381786== 
+==381786== HEAP SUMMARY:
+==381786==     in use at exit: 0 bytes in 0 blocks
+==381786==   total heap usage: 12 allocs, 12 frees, 622 bytes allocated
+==381786== 
+==381786== All heap blocks were freed -- no leaks are possible
+==381786== 
+==381786== For lists of detected and suppressed errors, rerun with: -s
+==381786== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
