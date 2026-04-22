@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:55 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:59:52 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-static void	init_table_values(table_struct *table, char **av, int ac)
+static void	init_table_values(t_table *table, char **av, int ac)
 {
 	if (ac == 5)
 		table->max_meal = -1;
@@ -10,18 +22,19 @@ static void	init_table_values(table_struct *table, char **av, int ac)
 	table->time_to_die = long_atoi(av[2]);
 	table->time_to_eat = long_atoi(av[3]);
 	table->time_to_sleep = long_atoi(av[4]);
-	table->think_time = ((long)table->time_to_die 
-                   - (long)table->time_to_eat 
-                   - (long)table->time_to_sleep) / 2;
+	table->think_time = ((long)table->time_to_die
+			- (long)table->time_to_eat
+			- (long)table->time_to_sleep) / 2;
 }
-static void	init_table_mutexes(table_struct	*table)
+
+static void	init_table_mutexes(t_table	*table)
 {
 	pthread_mutex_init(&table->display_mutex, NULL);
 	pthread_mutex_init(&table->last_meal_mutex, NULL);
 	pthread_mutex_init(&table->end_meal_mutex, NULL);
 }
 
-static void	init_fork_mutexes(table_struct	*table)
+static void	init_fork_mutexes(t_table	*table)
 {
 	int	i;
 
@@ -33,9 +46,9 @@ static void	init_fork_mutexes(table_struct	*table)
 	}
 }
 
-int	init_table(table_struct *table, char **av, int ac)
+int	init_table(t_table *table, char **av, int ac)
 {
-	memset(table, 0, sizeof(table_struct));
+	memset(table, 0, sizeof(t_table));
 	init_table_values(table, av, ac);
 	init_table_mutexes(table);
 	table->forks = malloc(sizeof(pthread_mutex_t) * table->nb_philo);
@@ -54,7 +67,7 @@ int	init_table(table_struct *table, char **av, int ac)
 	return (0);
 }
 
-void	init_philo(philo_struct *philo, table_struct *table, int i)
+void	init_philo(t_philo *philo, t_table *table, int i)
 {
 	philo->philo_id = i;
 	philo->table = table;

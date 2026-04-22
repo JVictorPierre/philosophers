@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   supervisor_routine.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:40 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:57:02 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-static void	end_meal(philo_struct *philo)
+static void	end_meal(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->end_meal_mutex);
 	philo->table->end_meal = 1;
 	pthread_mutex_unlock(&philo->table->end_meal_mutex);
 }
 
-static void	philo_death(philo_struct *philo)
+static void	philo_death(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->table->display_mutex);
 	pthread_mutex_lock(&philo->table->end_meal_mutex);
@@ -18,16 +30,18 @@ static void	philo_death(philo_struct *philo)
 	pthread_mutex_unlock(&philo->table->display_mutex);
 }
 
-static void	check_meal(philo_struct *philo, int *philo_satiates)
+static void	check_meal(t_philo *philo, int *philo_satiates)
 {
 	pthread_mutex_lock(&philo->eaten_meal_mutex);
-	if (philo->table->max_meal != -1 && philo->eaten_meal >= philo->table->max_meal)
+	if (philo->table->max_meal != -1
+		&& philo->eaten_meal >= philo->table->max_meal)
 		*philo_satiates += 1;
 	pthread_mutex_unlock(&philo->eaten_meal_mutex);
 	if (*philo_satiates == philo->table->nb_philo)
 		end_meal(philo);
 }
-static size_t get_last_meal(table_struct *table, int i)
+
+static size_t	get_last_meal(t_table *table, int i)
 {
 	size_t			last_meal_tmp;
 
@@ -37,12 +51,12 @@ static size_t get_last_meal(table_struct *table, int i)
 	return (last_meal_tmp);
 }
 
-void	supervisor_routine(philo_struct *philo)
+void	supervisor_routine(t_philo *philo)
 {
 	int				i;
 	int				philo_satiates;
 	size_t			last_meal_tmp;
-	table_struct	*table;
+	t_table			*table;
 
 	i = 0;
 	table = philo[0].table;

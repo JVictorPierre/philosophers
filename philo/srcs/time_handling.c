@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time_handling.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:39:08 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:50:10 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 size_t	get_time(void)
@@ -10,7 +22,7 @@ size_t	get_time(void)
 	return (ms);
 }
 
-void	ft_sleep(size_t timetowait, table_struct *table)
+void	ft_sleep(size_t timetowait, t_table *table)
 {
 	size_t	endtime;
 
