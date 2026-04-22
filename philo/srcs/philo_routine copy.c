@@ -6,7 +6,7 @@ static void	meal_routine(philo_struct *philo)
 	philo->table->last_meal[philo->philo_id] = get_time();
 	pthread_mutex_unlock(&philo->table->last_meal_mutex);
 	safe_print(philo, "is eating\n");
-	ft_sleep(philo->table->time_to_eat, philo->table);
+	ft_sleep(philo->table->time_to_eat);
 }
 
 static void philo_loop_routine_action(philo_struct *philo, int first_fork, int second_fork)
@@ -15,7 +15,7 @@ static void philo_loop_routine_action(philo_struct *philo, int first_fork, int s
 	safe_print(philo, "has taken a fork\n");
 	if (philo->table->nb_philo == 1)
 	{
-		ft_sleep(philo->table->time_to_die, philo->table);
+		ft_sleep(philo->table->time_to_die);
 		pthread_mutex_unlock(&philo->table->forks[first_fork]);
 		return ;
 	}
@@ -30,8 +30,6 @@ static void philo_loop_routine_action(philo_struct *philo, int first_fork, int s
 	safe_print(philo, "is sleeping\n");
 	ft_sleep(philo->table->time_to_sleep, philo->table);
 	safe_print(philo, "is thinking\n");
-	if (philo->table->think_time > 0)
-   		ft_sleep(philo->table->think_time, philo->table);
 }
 
 void	*philo_routine(void *arg)
@@ -44,7 +42,7 @@ void	*philo_routine(void *arg)
 	left_fork = philo->philo_id;
 	right_fork = (philo->philo_id + 1) % philo->table->nb_philo;
 	if (philo->philo_id % 2 == 0)
-		ft_sleep(philo->table->time_to_eat / 10, philo->table);
+		ft_sleep(philo->table->time_to_eat / 2, philo->table);
 	while (read_end_meal(philo->table) == 0)
 	{
 		if (philo->philo_id % 2 == 0)

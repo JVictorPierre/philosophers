@@ -25,6 +25,7 @@ typedef struct t_struct
 	pthread_mutex_t		end_meal_mutex;
 	int		end_meal;
 	int		max_meal;
+	long	think_time;
 } table_struct;
 
 typedef struct p_struct
@@ -41,7 +42,7 @@ long	long_atoi(char *str);
 void	init_philo(philo_struct *philo, table_struct *table, int i);
 void	*philo_routine(void *arg);
 size_t	get_time(void);
-void	ft_sleep(size_t timetowait);
+void	ft_sleep(size_t timetowait, table_struct *table);
 void	supervisor_routine(philo_struct *philo);
 void	free_table(table_struct *table);
 void	free_all(table_struct *table, philo_struct *philo);

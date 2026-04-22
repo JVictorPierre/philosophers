@@ -178,7 +178,8 @@ int	full_check(char **av)
 		i++;
 	}
 	return (0);
-}#include "philo.h"
+}
+#include "philo.h"
 
 static void	meal_routine(philo_struct *philo)
 {

@@ -10,6 +10,9 @@ static void	init_table_values(table_struct *table, char **av, int ac)
 	table->time_to_die = long_atoi(av[2]);
 	table->time_to_eat = long_atoi(av[3]);
 	table->time_to_sleep = long_atoi(av[4]);
+	table->think_time = ((long)table->time_to_die 
+                   - (long)table->time_to_eat 
+                   - (long)table->time_to_sleep) / 2;
 }
 static void	init_table_mutexes(table_struct	*table)
 {

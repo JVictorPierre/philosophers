@@ -10,13 +10,15 @@ size_t	get_time(void)
 	return (ms);
 }
 
-void	ft_sleep(size_t timetowait)
+void	ft_sleep(size_t timetowait, table_struct *table)
 {
 	size_t	endtime;
 
 	endtime = get_time() + timetowait;
 	while (get_time() < endtime)
 	{
+		if (read_end_meal(table) == 1)
+			return ;
 		usleep(NAP_TIME);
 	}
 }
