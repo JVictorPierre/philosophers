@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:05 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:53:03 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-static void	init_philo_loop(table_struct *table, philo_struct *philo)
+static void	init_philo_loop(t_table *table, t_philo *philo)
 {
 	int	i;
-	
+
 	i = 0;
 	while (i != table->nb_philo)
 	{
@@ -11,36 +23,36 @@ static void	init_philo_loop(table_struct *table, philo_struct *philo)
 		i++;
 	}
 }
-static void	create_threads(table_struct *table, philo_struct *philo)
+
+static void	create_threads(t_table *table, t_philo *philo)
 {
 	int	i;
 
 	i = 0;
-	while (i != table->nb_philo)	
+	while (i != table->nb_philo)
 	{
 		pthread_create(&philo[i].thread_id, NULL, philo_routine, &philo[i]);
 		i++;
 	}
 }
 
-static void	clean_threads(table_struct *table, philo_struct *philo)
+static void	clean_threads(t_table *table, t_philo *philo)
 {
 	int	i;
 
 	i = 0;
 	while (i < table->nb_philo)
 	{
-	pthread_join(philo[i].thread_id, NULL);
-	pthread_mutex_destroy(&philo[i].eaten_meal_mutex);
-	i++;
+		pthread_join(philo[i].thread_id, NULL);
+		pthread_mutex_destroy(&philo[i].eaten_meal_mutex);
+		i++;
 	}
-	
 }
 
 int	main(int ac, char **av)
 {
-	table_struct	table;
-	philo_struct	*philo;
+	t_table	table;
+	t_philo	*philo;
 
 	if (ac < 5 || ac > 6)
 	{
@@ -51,7 +63,7 @@ int	main(int ac, char **av)
 		return (1);
 	if (init_table(&table, av, ac) == 1)
 		return (1);
-	philo = malloc(sizeof(philo_struct) * table.nb_philo);
+	philo = malloc(sizeof(t_philo) * table.nb_philo);
 	if (!philo)
 	{
 		free_table(&table);

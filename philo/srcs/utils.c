@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:45 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:50:29 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int	read_end_meal(table_struct *table)
+int	read_end_meal(t_table *table)
 {
 	int	tmp_end_meal;
 
@@ -27,7 +39,7 @@ long	long_atoi(char *str)
 	return (nb);
 }
 
-void	safe_print(philo_struct *philo, char *message)
+void	safe_print(t_philo *philo, char *message)
 {
 	pthread_mutex_lock(&philo->table->display_mutex);
 	if (read_end_meal(philo->table) == 1)
