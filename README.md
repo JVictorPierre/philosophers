@@ -72,6 +72,6 @@ To understand and build this project, the following resources are essential:
 
 ### Artificial Intelligence usage
 
-During this project, an AI (Claude) was used as an aid for the following tasks:
+During this project, an AI was used as an aid for the following tasks:
 
 * **README:** Definition of the structure, error correction, and help with English wording.
