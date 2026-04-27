@@ -1,0 +1,725 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   death_monitor.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:01 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:30:02 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+static void	philo_death(t_philo *philo)
+{
+	sem_wait(philo->table->display);
+	printf("%zu %d died\n", get_time() - philo->table->start_time,
+		philo->philo_id + 1);
+	sem_post(philo->table->death_alarm);
+}
+
+void	*time_supervisor_routine(void *arg)
+{
+	t_philo	*philo;
+	size_t	last_meal_tmp;
+
+	philo = (t_philo *)arg;
+	while (1)
+	{
+		sem_wait(philo->sem_last_meal);
+		last_meal_tmp = philo->last_meal;
+		sem_post(philo->sem_last_meal);
+		if (get_time() > last_meal_tmp + philo->table->time_to_die)
+		{
+			philo_death(philo);
+			return (NULL);
+		}
+		usleep(50);
+	}
+	return (NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   display.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:43 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:24:45 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+void	safe_print(t_philo *philo, char *message)
+{
+	sem_wait(philo->table->display);
+	printf("%zu %d %s", get_time() - philo->table->start_time,
+		philo->philo_id + 1, message);
+	sem_post(philo->table->display);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:09 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 15:42:54 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+void	unlink_semaphores(void)
+{
+	sem_unlink("/forks");
+	sem_unlink("/display");
+	sem_unlink("/death_alarm");
+	sem_unlink("/meal_counter");
+	sem_unlink("/table");
+}
+
+static void	close_semaphores(t_table *table)
+{
+	sem_close(table->forks);
+	sem_close(table->display);
+	sem_close(table->death_alarm);
+	sem_close(table->meal_counter);
+	sem_close(table->table_sem);
+}
+
+void	clean_semaphores(t_table *table)
+{
+	close_semaphores(table);
+	unlink_semaphores();
+}
+
+int	cleanup(t_table *table, int step)
+{
+	if (step >= 1)
+		sem_close(table->forks);
+	if (step >= 2)
+		sem_close(table->display);
+	if (step >= 3)
+		sem_close(table->death_alarm);
+	if (step >= 4)
+		sem_close(table->meal_counter);
+	unlink_semaphores();
+	return (1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   global_supervisor.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:32:29 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 16:00:31 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+static void	error_fork(t_table *table, int i)
+{
+	clean_semaphores(table);
+	printf("Error : fork didn't work");
+	i--;
+	while (i >= 0)
+	{
+		kill(table->pids[i], SIGKILL);
+		i--;
+	}
+}
+
+static void	supervisor_loop(t_table *table, int *i)
+{
+	pid_t		process;
+	t_philo		philo;
+
+	init_philo(&philo, table, *i);
+	process = fork();
+	if (process < 0)
+	{
+		error_fork(table, *i);
+		free(table->pids);
+		exit (1);
+	}
+	if (process == 0)
+	{
+		philo_routine(&philo);
+		exit(0);
+	}
+	else if (process > 0)
+	{
+		table->pids[*i] = process;
+		(*i)++;
+	}
+}
+
+static void	kill_child(t_table *table, int i)
+{
+	while (i >= 0)
+	{
+		kill(table->pids[i], SIGKILL);
+		i--;
+	}
+	i = 0;
+	while (i < table->nb_philo)
+	{
+		waitpid(table->pids[i], NULL, 0);
+		i++;
+	}
+}
+
+void	global_supervisor(t_table *table)
+{
+	int			i;
+	pthread_t	meal_supervisor_id;
+
+	i = 0;
+	table->start_time = get_time();
+	if (init_semaphores(table) == 1)
+	{
+		printf("Error: couldn't open semaphores");
+		exit (1);
+	}
+	while (i < table->nb_philo)
+	{
+		supervisor_loop(table, &i);
+	}
+	pthread_create(&meal_supervisor_id, NULL, meal_supervisor_routine, table);
+	sem_wait(table->death_alarm);
+	kill_child(table, i - 1);
+	pthread_detach(meal_supervisor_id);
+	unlink_semaphores();
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:18 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 15:52:55 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+int	init_table(t_table *table, char **av, int ac)
+{
+	memset(table, 0, sizeof(t_table));
+	if (ac == 5)
+		table->max_meal = -1;
+	else if (ac == 6)
+		table->max_meal = long_atoi(av[5]);
+	table->nb_philo = long_atoi(av[1]);
+	table->time_to_die = long_atoi(av[2]);
+	table->time_to_eat = long_atoi(av[3]);
+	table->time_to_sleep = long_atoi(av[4]);
+	table->pids = malloc(sizeof(int) * table->nb_philo);
+	table->think_time = (((long)table->time_to_die
+				- (long)table->time_to_eat
+				- (long)table->time_to_sleep) / 2);
+	if (!table->pids)
+		return (1);
+	return (0);
+}
+
+void	init_philo(t_philo *philo, t_table *table, int i)
+{
+	philo->philo_id = i;
+	philo->table = table;
+	philo->last_meal = table->start_time;
+	philo->eaten_meal = 0;
+}
+
+static int	open_one_sem(sem_t **sem, char *name, int value)
+{
+	*sem = sem_open(name, O_CREAT, 0644, value);
+	if (*sem == SEM_FAILED)
+		return (1);
+	return (0);
+}
+
+int	init_semaphores(t_table *table)
+{
+	int	slots;
+
+	unlink_semaphores();
+	if (open_one_sem(&table->forks, "/forks", table->nb_philo) == 1)
+		return (cleanup(table, 0));
+	if (open_one_sem(&table->display, "/display", 1) == 1)
+		return (cleanup(table, 1));
+	if (open_one_sem(&table->death_alarm, "/death_alarm", 0) == 1)
+		return (cleanup(table, 2));
+	if (open_one_sem(&table->meal_counter, "/meal_counter", 0) == 1)
+		return (cleanup(table, 3));
+	if (table->nb_philo > 1)
+		slots = table->nb_philo / 2;
+	else
+		slots = 1;
+	if (open_one_sem(&table->table_sem, "/table", slots) == 1)
+		return (cleanup(table, 4));
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:57 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:26:47 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+int	main(int ac, char **av)
+{
+	t_table	table;
+
+	if (ac < 5 || ac > 6)
+	{
+		printf("Function must have 5 or 6 arguments\n");
+		return (1);
+	}
+	if (full_check(av) == 1)
+		return (1);
+	if (init_table(&table, av, ac) == 1)
+	{
+		printf("Error: Malloc failed\n");
+		return (1);
+	}
+	global_supervisor(&table);
+	free(table.pids);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   meal_supervisor.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:25 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:31:25 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+void	*meal_supervisor_routine(void *arg)
+{
+	int		i;
+	t_table	*table;
+
+	i = 0;
+	table = (t_table *)arg;
+	while (i < table->nb_philo)
+	{
+		sem_wait(table->meal_counter);
+		i++;
+	}
+	sem_post(table->death_alarm);
+	return (NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:25:05 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:25:06 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+long	long_atoi(char *str)
+{
+	long int	nb;
+	int			i;
+
+	nb = 0;
+	i = 0;
+	if (str[0] == '+')
+		i++;
+	while (str[i] && str[i] >= '0' && str[i] <= '9')
+	{
+		nb = (nb * 10 + str[i] - '0');
+		i++;
+	}
+	return (nb);
+}
+
+static int	check_if_only_digit(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '\0')
+	{
+		printf("Argument can't be empty\n");
+		return (1);
+	}
+	if (str[0] == '+')
+		i++;
+	if (str[i] == '\0')
+	{
+		printf("Argument must contain a valid value\n");
+		return (1);
+	}
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+		{
+			printf("Arguments must be positive numbers only\n");
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+static int	check_each_argument(char *str)
+{
+	long	number;
+
+	number = long_atoi(str);
+	if (number < 1 || number > INT_MAX)
+	{
+		printf("Error, argument value must be between 1 and INT MAX\n");
+		return (1);
+	}
+	return (0);
+}
+
+int	full_check(char **av)
+{
+	int	i;
+
+	i = 1;
+	while (av[i])
+	{
+		if (check_if_only_digit(av[i]) == 1)
+			return (1);
+		if (check_each_argument(av[i]) == 1)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_routine.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:30 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 15:58:44 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+static void	clean_child_exit(t_philo *philo)
+{
+	sem_close(philo->sem_last_meal);
+	sem_close(philo->table->forks);
+	sem_close(philo->table->display);
+	sem_close(philo->table->death_alarm);
+	sem_close(philo->table->meal_counter);
+	sem_close(philo->table->table_sem);
+	free(philo->table->pids);
+	exit(0);
+}
+
+static void	philo_loop_routine(t_philo *philo)
+{
+	sem_wait(philo->table->table_sem);
+	sem_wait(philo->table->forks);
+	safe_print(philo, "has taken a fork\n");
+	sem_wait(philo->table->forks);
+	safe_print(philo, "has taken a fork\n");
+	sem_wait(philo->sem_last_meal);
+	philo->last_meal = get_time();
+	sem_post(philo->sem_last_meal);
+	safe_print(philo, "is eating\n");
+	ft_sleep(philo->table->time_to_eat);
+	sem_post(philo->table->forks);
+	sem_post(philo->table->forks);
+	sem_post(philo->table->table_sem);
+	philo->eaten_meal++;
+	if (philo->table->max_meal != -1
+		&& philo->eaten_meal == philo->table->max_meal)
+	{
+		sem_post(philo->table->meal_counter);
+		clean_child_exit(philo);
+	}
+	safe_print(philo, "is sleeping\n");
+	ft_sleep(philo->table->time_to_sleep);
+	safe_print(philo, "is thinking\n");
+	if (philo->table->think_time > 0)
+		ft_sleep(philo->table->think_time);
+}
+
+void	*philo_routine(void *arg)
+{
+	char		*id;
+	char		*name;
+	pthread_t	time_supervision;
+	t_philo		*philo;
+
+	philo = (t_philo *)arg;
+	id = ft_itoa(philo->philo_id);
+	name = ft_strjoin("/meal_", id);
+	philo->sem_last_meal = sem_open(name, O_CREAT, 0644, 1);
+	sem_unlink(name);
+	free(id);
+	free(name);
+	pthread_create(&time_supervision, NULL, time_supervisor_routine, philo);
+	pthread_detach(time_supervision);
+	if (philo->philo_id % 2 == 0)
+		ft_sleep(philo->table->time_to_eat / 10);
+	while (1)
+	{
+		philo_loop_routine(philo);
+	}
+	return (NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time_handling.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:25:13 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:25:14 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+size_t	get_time(void)
+{
+	struct timeval	tv;
+	size_t			ms;
+
+	gettimeofday(&tv, NULL);
+	ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (ms);
+}
+
+void	ft_sleep(size_t timetowait)
+{
+	size_t	endtime;
+
+	endtime = get_time() + timetowait;
+	while (get_time() < endtime)
+	{
+		usleep(NAP_TIME);
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:24:36 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 14:24:38 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo_bonus.h"
+
+static size_t	ft_count(long n)
+{
+	size_t	len;
+
+	len = 0;
+	if (n <= 0)
+		len++;
+	while (n != 0)
+	{
+		n = n / 10;
+		len++;
+	}
+	return (len);
+}
+
+char	*ft_itoa(int n)
+{
+	size_t	len;
+	char	*result;
+	long	nb;
+
+	nb = n;
+	len = ft_count(nb);
+	result = malloc(sizeof(char) * (len + 1));
+	if (!result)
+		return (NULL);
+	result[len] = '\0';
+	len--;
+	if (nb == 0)
+		result[0] = '0';
+	else if (nb < 0)
+	{
+		result[0] = '-';
+		nb = -nb;
+	}
+	while (nb > 0)
+	{
+		result[len] = ((nb % 10) + '0');
+		nb = nb / 10;
+		len--;
+	}
+	return (result);
+}
+
+static char	*ft_strcpy(char *dest, const char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+static char	*ft_strcat(char *dest, const char *src)
+
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (dest[i] != '\0')
+		i++;
+	while (src[j] != '\0')
+	{
+		dest[i] = src[j];
+		j++;
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	size_t	lens1;
+	size_t	lens2;
+	char	*newstr;
+
+	if (!s1 || !s2)
+		return (NULL);
+	lens1 = 0;
+	lens2 = 0;
+	while (s1[lens1])
+		lens1++;
+	while (s2[lens2])
+		lens2++;
+	newstr = malloc(sizeof(char) * (lens1 + lens2 + 1));
+	if (!newstr)
+		return (NULL);
+	newstr = ft_strcpy(newstr, s1);
+	newstr = ft_strcat(newstr, s2);
+	return (newstr);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 14:23:40 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 15:43:01 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
+
+# include <pthread.h>
+# include <fcntl.h>
+# include <limits.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <string.h>
+# include <semaphore.h>
+# include <sys/types.h>
+# include <signal.h>
+# include <sys/wait.h>
+
+# define NAP_TIME	500
+
+typedef struct t_struct
+{
+	size_t	start_time;
+	int		nb_philo;
+	size_t	time_to_die;
+	size_t	time_to_eat;
+	size_t	time_to_sleep;
+	int		max_meal;
+	sem_t	*forks;
+	sem_t	*display;
+	sem_t	*death_alarm;
+	sem_t	*meal_counter;
+	sem_t	*table_sem;
+	int		*pids;
+	long	think_time;
+}	t_table;
+
+typedef struct p_struct
+{
+	t_table			*table;
+	int				philo_id;
+	int				eaten_meal;
+	size_t			last_meal;
+	sem_t			*sem_last_meal;
+}	t_philo;
+
+char	*ft_itoa(int n);
+char	*ft_strjoin(char const *s1, char const *s2);
+void	*meal_supervisor_routine(void *arg);
+void	*philo_routine(void *arg);
+int		full_check(char **av);
+void	*time_supervisor_routine(void *arg);
+int		init_table(t_table *table, char **av, int ac);
+void	global_supervisor(t_table *table);
+long	long_atoi(char *str);
+size_t	get_time(void);
+void	safe_print(t_philo *philo, char *message);
+void	ft_sleep(size_t timetowait);
+void	init_philo(t_philo *philo, t_table *table, int i);
+void	clean_semaphores(t_table *table);
+void	unlink_semaphores(void);
+int		init_semaphores(t_table *table);
+int		cleanup(t_table *table, int step);
+
+#endif

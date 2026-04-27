@@ -12,7 +12,7 @@
 
 #include "philo_bonus.h"
 
-void static	philo_death(t_philo *philo)
+static void	philo_death(t_philo *philo)
 {
 	sem_wait(philo->table->display);
 	printf("%zu %d died\n", get_time() - philo->table->start_time,

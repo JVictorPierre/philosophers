@@ -1,0 +1,569 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:37:58 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:51:40 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+void	free_all(t_table *table, t_philo *philo)
+{
+	free_table(table);
+	free(philo);
+}
+
+void	free_table(t_table *table)
+{
+	int	i;
+
+	i = 0;
+	if (table->last_meal)
+		free(table->last_meal);
+	if (table->forks)
+	{
+		while (i < table->nb_philo)
+		{
+			pthread_mutex_destroy(&table->forks[i]);
+			i++;
+		}
+		free(table->forks);
+	}
+	pthread_mutex_destroy(&table->display_mutex);
+	pthread_mutex_destroy(&table->last_meal_mutex);
+	pthread_mutex_destroy(&table->end_meal_mutex);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:55 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:59:52 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static void	init_table_values(t_table *table, char **av, int ac)
+{
+	if (ac == 5)
+		table->max_meal = -1;
+	else if (ac == 6)
+		table->max_meal = long_atoi(av[5]);
+	table->nb_philo = long_atoi(av[1]);
+	table->time_to_die = long_atoi(av[2]);
+	table->time_to_eat = long_atoi(av[3]);
+	table->time_to_sleep = long_atoi(av[4]);
+	table->think_time = ((long)table->time_to_die
+			- (long)table->time_to_eat
+			- (long)table->time_to_sleep) / 2;
+}
+
+static void	init_table_mutexes(t_table	*table)
+{
+	pthread_mutex_init(&table->display_mutex, NULL);
+	pthread_mutex_init(&table->last_meal_mutex, NULL);
+	pthread_mutex_init(&table->end_meal_mutex, NULL);
+}
+
+static void	init_fork_mutexes(t_table	*table)
+{
+	int	i;
+
+	i = 0;
+	while (i < table->nb_philo)
+	{
+		pthread_mutex_init(&table->forks[i], NULL);
+		i++;
+	}
+}
+
+int	init_table(t_table *table, char **av, int ac)
+{
+	memset(table, 0, sizeof(t_table));
+	init_table_values(table, av, ac);
+	init_table_mutexes(table);
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->nb_philo);
+	if (!table->forks)
+	{
+		free_table(table);
+		return (1);
+	}
+	init_fork_mutexes(table);
+	table->last_meal = malloc(sizeof(size_t) * table->nb_philo);
+	if (!table->last_meal)
+	{
+		free_table(table);
+		return (1);
+	}
+	return (0);
+}
+
+void	init_philo(t_philo *philo, t_table *table, int i)
+{
+	philo->philo_id = i;
+	philo->table = table;
+	philo->table->last_meal[i] = table->start_time;
+	philo->eaten_meal = 0;
+	pthread_mutex_init(&philo->eaten_meal_mutex, NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:05 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:53:03 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static void	init_philo_loop(t_table *table, t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i != table->nb_philo)
+	{
+		init_philo(&philo[i], table, i);
+		i++;
+	}
+}
+
+static void	create_threads(t_table *table, t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i != table->nb_philo)
+	{
+		pthread_create(&philo[i].thread_id, NULL, philo_routine, &philo[i]);
+		i++;
+	}
+}
+
+static void	clean_threads(t_table *table, t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < table->nb_philo)
+	{
+		pthread_join(philo[i].thread_id, NULL);
+		pthread_mutex_destroy(&philo[i].eaten_meal_mutex);
+		i++;
+	}
+}
+
+int	main(int ac, char **av)
+{
+	t_table	table;
+	t_philo	*philo;
+
+	if (ac < 5 || ac > 6)
+	{
+		printf("Function must have 5 or 6 arguments\n");
+		return (1);
+	}
+	if (full_check(av) == 1)
+		return (1);
+	if (init_table(&table, av, ac) == 1)
+		return (1);
+	philo = malloc(sizeof(t_philo) * table.nb_philo);
+	if (!philo)
+	{
+		free_table(&table);
+		return (1);
+	}
+	table.start_time = get_time();
+	init_philo_loop(&table, philo);
+	create_threads(&table, philo);
+	supervisor_routine(philo);
+	clean_threads(&table, philo);
+	free_all(&table, philo);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:39:01 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:39:02 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static int	check_if_only_digit(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '\0')
+	{
+		printf("Argument can't be empty\n");
+		return (1);
+	}
+	if (str[0] == '+')
+		i++;
+	if (str[i] == '\0')
+	{
+		printf("Argument must contain a valid value\n");
+		return (1);
+	}
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+		{
+			printf("Arguments must be positive numbers only\n");
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+static int	check_each_argument(char *str)
+{
+	long	number;
+
+	number = long_atoi(str);
+	if (number < 1 || number > INT_MAX)
+	{
+		printf("Error, argument value must be between 1 and INT MAX\n");
+		return (1);
+	}
+	return (0);
+}
+
+int	full_check(char **av)
+{
+	int	i;
+
+	i = 1;
+	while (av[i])
+	{
+		if (check_if_only_digit(av[i]) == 1)
+			return (1);
+		if (check_each_argument(av[i]) == 1)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_routine.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:15 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:55:56 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static void	meal_routine(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->last_meal_mutex);
+	philo->table->last_meal[philo->philo_id] = get_time();
+	pthread_mutex_unlock(&philo->table->last_meal_mutex);
+	safe_print(philo, "is eating\n");
+	ft_sleep(philo->table->time_to_eat, philo->table);
+}
+
+static void	philo_loop_routine_action(t_philo *philo, int fork1, int fork2)
+{
+	pthread_mutex_lock(&philo->table->forks[fork1]);
+	safe_print(philo, "has taken a fork\n");
+	if (philo->table->nb_philo == 1)
+	{
+		ft_sleep(philo->table->time_to_die, philo->table);
+		pthread_mutex_unlock(&philo->table->forks[fork1]);
+		return ;
+	}
+	pthread_mutex_lock(&philo->table->forks[fork2]);
+	safe_print(philo, "has taken a fork\n");
+	meal_routine(philo);
+	pthread_mutex_unlock(&philo->table->forks[fork1]);
+	pthread_mutex_unlock(&philo->table->forks[fork2]);
+	pthread_mutex_lock(&philo->eaten_meal_mutex);
+	philo->eaten_meal++;
+	pthread_mutex_unlock(&philo->eaten_meal_mutex);
+	safe_print(philo, "is sleeping\n");
+	ft_sleep(philo->table->time_to_sleep, philo->table);
+	safe_print(philo, "is thinking\n");
+	if (philo->table->think_time > 0)
+		ft_sleep(philo->table->think_time, philo->table);
+}
+
+void	*philo_routine(void *arg)
+{
+	t_philo			*philo;
+	int				left_fork;
+	int				right_fork;
+
+	philo = (t_philo *)arg;
+	left_fork = philo->philo_id;
+	right_fork = (philo->philo_id + 1) % philo->table->nb_philo;
+	if (philo->philo_id % 2 == 0)
+		ft_sleep(philo->table->time_to_eat / 10, philo->table);
+	while (read_end_meal(philo->table) == 0)
+	{
+		if (philo->philo_id % 2 == 0)
+			philo_loop_routine_action(philo, left_fork, right_fork);
+		else
+			philo_loop_routine_action(philo, right_fork, left_fork);
+	}
+	return (NULL);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   supervisor_routine.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:40 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:57:02 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+static void	end_meal(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->end_meal_mutex);
+	philo->table->end_meal = 1;
+	pthread_mutex_unlock(&philo->table->end_meal_mutex);
+}
+
+static void	philo_death(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->display_mutex);
+	pthread_mutex_lock(&philo->table->end_meal_mutex);
+	philo->table->end_meal = 1;
+	pthread_mutex_unlock(&philo->table->end_meal_mutex);
+	printf("%zu %d died\n", get_time() - philo->table->start_time,
+		philo->philo_id + 1);
+	pthread_mutex_unlock(&philo->table->display_mutex);
+}
+
+static void	check_meal(t_philo *philo, int *philo_satiates)
+{
+	pthread_mutex_lock(&philo->eaten_meal_mutex);
+	if (philo->table->max_meal != -1
+		&& philo->eaten_meal >= philo->table->max_meal)
+		*philo_satiates += 1;
+	pthread_mutex_unlock(&philo->eaten_meal_mutex);
+	if (*philo_satiates == philo->table->nb_philo)
+		end_meal(philo);
+}
+
+static size_t	get_last_meal(t_table *table, int i)
+{
+	size_t			last_meal_tmp;
+
+	pthread_mutex_lock(&table->last_meal_mutex);
+	last_meal_tmp = table->last_meal[i];
+	pthread_mutex_unlock(&table->last_meal_mutex);
+	return (last_meal_tmp);
+}
+
+void	supervisor_routine(t_philo *philo)
+{
+	int				i;
+	int				philo_satiates;
+	size_t			last_meal_tmp;
+	t_table			*table;
+
+	i = 0;
+	table = philo[0].table;
+	while (read_end_meal(table) == 0)
+	{
+		philo_satiates = 0;
+		while (i < table->nb_philo)
+		{
+			last_meal_tmp = get_last_meal(table, i);
+			if (get_time() > last_meal_tmp + table->time_to_die)
+			{
+				philo_death(&philo[i]);
+				return ;
+			}
+			check_meal(&philo[i], &philo_satiates);
+			i++;
+		}
+		usleep(50);
+		i = 0;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time_handling.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:39:08 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:50:10 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+size_t	get_time(void)
+{
+	struct timeval	tv;
+	size_t			ms;
+
+	gettimeofday(&tv, NULL);
+	ms = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (ms);
+}
+
+void	ft_sleep(size_t timetowait, t_table *table)
+{
+	size_t	endtime;
+
+	endtime = get_time() + timetowait;
+	while (get_time() < endtime)
+	{
+		if (read_end_meal(table) == 1)
+			return ;
+		usleep(NAP_TIME);
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:38:45 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:50:29 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+int	read_end_meal(t_table *table)
+{
+	int	tmp_end_meal;
+
+	pthread_mutex_lock(&table->end_meal_mutex);
+	tmp_end_meal = table->end_meal;
+	pthread_mutex_unlock(&table->end_meal_mutex);
+	return (tmp_end_meal);
+}
+
+long	long_atoi(char *str)
+{
+	long int	nb;
+	int			i;
+
+	nb = 0;
+	i = 0;
+	if (str[0] == '+')
+		i++;
+	while (str[i] && str[i] >= '0' && str[i] <= '9')
+	{
+		nb = (nb * 10 + str[i] - '0');
+		i++;
+	}
+	return (nb);
+}
+
+void	safe_print(t_philo *philo, char *message)
+{
+	pthread_mutex_lock(&philo->table->display_mutex);
+	if (read_end_meal(philo->table) == 1)
+	{
+		pthread_mutex_unlock(&philo->table->display_mutex);
+		return ;
+	}
+	printf("%zu %d %s", get_time() - philo->table->start_time,
+		philo->philo_id + 1, message);
+	pthread_mutex_unlock(&philo->table->display_mutex);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmuth <jmuth@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/22 11:41:59 by jmuth             #+#    #+#             */
+/*   Updated: 2026/04/22 11:51:07 by jmuth            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PHILO_H
+# define PHILO_H
+
+# include <pthread.h>
+# include <limits.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <string.h>
+
+# define NAP_TIME	500
+
+typedef struct t_struct
+{
+	size_t				start_time;
+	int					nb_philo;
+	size_t				time_to_die;
+	size_t				time_to_eat;
+	size_t				time_to_sleep;
+	pthread_mutex_t		*forks;
+	size_t				*last_meal;
+	pthread_mutex_t		display_mutex;
+	pthread_mutex_t		last_meal_mutex;
+	pthread_mutex_t		end_meal_mutex;
+	int					end_meal;
+	int					max_meal;
+	long				think_time;
+}	t_table;
+
+typedef struct p_struct
+{
+	pthread_t		thread_id;
+	t_table			*table;
+	int				philo_id;
+	int				eaten_meal;
+	pthread_mutex_t	eaten_meal_mutex;
+}	t_philo;
+
+int		init_table(t_table *table, char **av, int ac);
+long	long_atoi(char *str);
+void	init_philo(t_philo *philo, t_table *table, int i);
+void	*philo_routine(void *arg);
+size_t	get_time(void);
+void	ft_sleep(size_t timetowait, t_table *table);
+void	supervisor_routine(t_philo *philo);
+void	free_table(t_table *table);
+void	free_all(t_table *table, t_philo *philo);
+int		read_end_meal(t_table *table);
+int		full_check(char **av);
+void	safe_print(t_philo *philo, char *message);
+
+#endif
