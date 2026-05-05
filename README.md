@@ -1,6 +1,3 @@
-![Score](https://img.shields.io/badge/Score-125%2F100-brightgreen)
-
-
 # Philosophers
 
 ![Score](https://img.shields.io/badge/Score-125%2F100-brightgreen)
