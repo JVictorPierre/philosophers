@@ -2,7 +2,7 @@
 
 ![Score](https://img.shields.io/badge/Score-125%2F100-brightgreen)
 ![Language](https://img.shields.io/badge/Language-C-blue)
-![School](https://img.shields.io/badge/École-42%20Angoulême-black)
+![School](https://img.shields.io/badge/42-%20Angoulême-black)
 
 > Validated at 42 Angoulême — **125/100** (mandatory + bonus completed)
 
