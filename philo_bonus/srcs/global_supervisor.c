@@ -24,11 +24,12 @@ static void	error_fork(t_table *table, int i)
 	}
 }
 
-static void	supervisor_loop(t_table *table, t_philo *philo, int *i)
+static void	supervisor_loop(t_table *table, int *i)
 {
 	pid_t		process;
+	t_philo		philo;
 
-	init_philo(philo, table, *i);
+	init_philo(&philo, table, *i);
 	process = fork();
 	if (process < 0)
 	{
@@ -67,7 +68,6 @@ void	global_supervisor(t_table *table)
 {
 	int			i;
 	pthread_t	meal_supervisor_id;
-	t_philo		philo;
 
 	i = 0;
 	table->start_time = get_time();
@@ -78,11 +78,11 @@ void	global_supervisor(t_table *table)
 	}
 	while (i < table->nb_philo)
 	{
-		supervisor_loop(table, &philo, &i);
+		supervisor_loop(table, &i);
 	}
 	pthread_create(&meal_supervisor_id, NULL, meal_supervisor_routine, table);
 	sem_wait(table->death_alarm);
 	kill_child(table, i - 1);
 	pthread_detach(meal_supervisor_id);
-	clean_semaphores(table);
+	unlink_semaphores();
 }
